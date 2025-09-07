@@ -2,12 +2,15 @@ package es.uma.lcc.caesium.frequencyassignment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.IntStream;
 
 /**
  * An instance of the Frequency Assignment Problem
@@ -328,4 +331,102 @@ public class FrequencyAssignmentProblem {
 		return cad;
 	}
 	
+	 /**
+     * Returns the set of usable frequencies as an array of integers
+     * from 0 up to maxFrequency().
+     * @return array of usable frequencies
+     */
+    public int[] getFrequencies() {
+        int maxF = maxFrequency();
+        return IntStream.rangeClosed(0, maxF).toArray();
+    }
+
+    
+    private List<String> emitterOrder = new ArrayList<>();
+    private Map<String,Integer> emitterIndex = new HashMap<>();
+
+    /** Demand per emitter aligned with emitterOrder[i] */
+    private int[] demandArray;
+
+    /** Distances in a dense matrix [i][j] aligned with emitterOrder */
+    private double[][] distanceMatrix;
+
+    /**
+     * For every distance value appearing in the instance (interference thresholds),
+     * we keep, for each emitter i, the neighbor indices j (j!=i) with distance(i,j) <= threshold,
+     * sorted by actual distance ascending.
+     *
+     * Keyed by the *exact* distance threshold read from the instance.
+     */
+    private Map<Double, List<List<Integer>>> neighborsWithin = new HashMap<>();
+    
+    public void recomputeCaches() {
+        // 1) stable order and index
+        this.emitterOrder = new ArrayList<>(getEmitterNames()); // TreeSet order already sorted
+        this.emitterIndex.clear();
+        for (int i = 0; i < emitterOrder.size(); i++) {
+            emitterIndex.put(emitterOrder.get(i), i);
+        }
+
+        // 2) demand array
+        int n = emitterOrder.size();
+        this.demandArray = new int[n];
+        for (int i = 0; i < n; i++) {
+            demandArray[i] = emitters.get(emitterOrder.get(i)).demand();
+        }
+
+        // 3) dense distance matrix
+        this.distanceMatrix = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            String idi = emitterOrder.get(i);
+            for (int j = 0; j < n; j++) {
+                String idj = emitterOrder.get(j);
+                distanceMatrix[i][j] = getDistance(idi, idj);
+            }
+        }
+
+        // 4) neighborsWithin for each distance threshold in the instance
+        this.neighborsWithin.clear();
+        // Collect unique thresholds found in the instance file (values of interferences)
+        // Note: we intentionally use the actual doubles from the file.
+        TreeSet<Double> thresholds = new TreeSet<>(new java.util.HashSet<>(interferences.values()));
+
+        for (double threshold : thresholds) {
+            List<List<Integer>> perEmitter = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) {
+                final int ii = i;
+                List<Integer> neigh = new ArrayList<>();
+                for (int j = 0; j < n; j++) {
+                    if (i == j) continue;
+                    if (distanceMatrix[i][j] <= threshold + EPSILON) {
+                        neigh.add(j);
+                    }
+                }
+                // sort by actual distance ascending
+                neigh.sort((a, b) -> Double.compare(distanceMatrix[ii][a], distanceMatrix[ii][b]));
+                perEmitter.add(neigh);
+            }
+            neighborsWithin.put(threshold, perEmitter);
+        }
+    }
+    
+    /** index in [0..n) for an emitter id */
+    public int indexOf(String id) { return emitterIndex.get(id); }
+
+    /** stable order of emitter ids (same order used by demandArray and distanceMatrix) */
+    public List<String> getEmitterOrder() { return emitterOrder; }
+
+    /** demand per emitter aligned with getEmitterOrder() */
+    public int[] getDemandArray() { return demandArray; }
+
+    /** distance(i,j) with i,j in 0..n-1 aligned with getEmitterOrder() */
+    public double[][] getDistanceMatrix() { return distanceMatrix; }
+
+    /**
+     * Neighbors (indices) for each threshold value present in the instance.
+     * neighborsWithin.get(threshold).get(i) => list of neighbor indices of i within threshold,
+     * sorted from closest to furthest.
+     */
+    public Map<Double, List<List<Integer>>> getNeighborsWithin() { return neighborsWithin; }
+    
 }
