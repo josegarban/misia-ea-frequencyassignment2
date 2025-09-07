@@ -27,7 +27,7 @@ public class FAPObjectiveFunctionDirect extends DiscreteObjectiveFunction implem
      */
     public FAPObjectiveFunctionDirect(FrequencyAssignmentProblem fap) {
         super(fap.numEmitters() * (fap.maxFrequency() + 1), 2); // binary alphabet
-		this.fap = new FrequencyAssignmentProblem();
+		this.fap = fap;
         this.maxFreq = fap.maxFrequency();
         this.freqCount = maxFreq + 1;
 
