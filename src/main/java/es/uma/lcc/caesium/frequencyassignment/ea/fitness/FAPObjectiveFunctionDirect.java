@@ -94,7 +94,22 @@ public class FAPObjectiveFunctionDirect extends DiscreteObjectiveFunction implem
 
         int globalMin = Integer.MAX_VALUE;
         int globalMax = Integer.MIN_VALUE;
-
+        
+     // Global "too many 1s" early-out: if total 1s > total demand, penalize and stop
+        final int totalDemand = problem.totalDemand();
+        int totalOnes = 0;
+        for (int i = 0; i < nEmitters; i++) {
+            int base = i * M;
+            for (int f = 0; f < M; f++) {
+                if ((int) g.getGene(base + f) == 1) {
+                    totalOnes++;
+                    if (totalOnes > totalDemand) {
+                        return BIG_PENALTY + PER_UNIT_PENALTY * (totalOnes - totalDemand);
+                    }
+                }
+            }
+        }
+        
         for (int i = 0; i < nEmitters; i++) {
             int base = i * M;
 
