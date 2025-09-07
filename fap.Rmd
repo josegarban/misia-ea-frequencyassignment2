@@ -16,7 +16,7 @@ geometry:
   - left=1.5in
   - right=1.5in
 params: 
-  instances: ["p1", "p2"]
+  instances: ["p1","p2"]
   algorithms: ["direct"]
   maxevals: 200000
 ---
