@@ -71,3 +71,4 @@ build/
 /run/*.dat
 /run/*stats*.json
 /run/*.pdf
+.Rproj.user

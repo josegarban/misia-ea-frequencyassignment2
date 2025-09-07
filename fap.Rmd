@@ -1,8 +1,8 @@
 ---
-title: "Multidimensional Knapsack"
+title: "Minimum Span Frequency Assignment Problem"
 subtitle: "Enfoque Directo frente a Decodificador"
 author: "Your Name"
-date: "2023-11-16"
+date: "2025-09-08"
 output: 
   bookdown::pdf_document2:
     fig_caption: yes
@@ -16,8 +16,8 @@ geometry:
   - left=1.5in
   - right=1.5in
 params: 
-  instances: ["gk01", "gk05", "gk08"]
-  algorithms: ["direct", "decoder"]
+  instances: ["p1", "p2"]
+  algorithms: ["direct"]
   maxevals: 200000
 ---
 
@@ -164,35 +164,9 @@ rm(list=c("data_list", "json_data"))
 
 # Introducción
 
-Vamos a considerar el problema de la \emph{Mochila 0-1 Multidimensional}. Este problema generaliza al problema clásico de la mochila 0-1, incluyendo múltiples mochilas en las que el conjunto de objetos seleccionado ha de caber simultáneamente. De manera más precisa, este problema se formula como sigue:
-
-\begin{itemize} 
-\item \textbf{Instancia}: una colección de $m$ mochilas con capacidades $W_1,\dots,W_m$, una colección de $n$ objetos con valores $v_1,\dots,v_n$ y pesos diferentes en cada mochila, i.e., $w_{ij}, 1\leqslant i\leqslant n, 1\leqslant j\leqslant m$ es el peso del objeto $i$ en la mochila $j$.
-\item \textbf{Solución}: un subconjunto $S\subseteq \{1,\dots,n\}$ de los objetos donde
-\begin{equation}
-\forall j \in\{1,\dots, m\}: \sum_{i\in S} w_{ij} \leqslant W_j
-\end{equation}
-\item \textbf{Objetivo}: maximizar el valor de los objetos en $S$, i.e., $\max \sum_{i\in S}v_i$.
-\end{itemize}
-
-Se trata por lo tanto de un problema con restricciones. Para abordar este problema mediante algoritmos evolutivos, un enfoque directo sería codificar cada solución como un vector binario $[b_1,\dots,b_n]$ donde $b_i$ indica si el objeto $i$ pertenece a la solución ($b_i=1$) o no ($b_i=0$). Una cadena de bits de este tipo puede manipularse mediante operaciones estándar de cruce y mutación, aunque lógicamente se producirán soluciones no válidas. Por ese motivo, nuestra función objetivo debe incluir un término de penalización. Sea $S$ el conjunto de objetos representado en la cadena de bits que queremos evaluar. Vamos a definir la función objetivo de la siguiente manera:
-\begin{equation}
-f(S) = \begin{cases}
-  \sum_{i\in S} v_i & {\rm factible}(S)\\
-  -{\rm penalty}(S) & \neg{\rm factible}(S)\\
-\end{cases}
-\end{equation}
-Así, los valores negativos corresponden a soluciones no válidas, y los valores no negativos a soluciones válidas. \textbf{Definir la forma concreta de la función de penalización penalty$(S)$ y justificar la elección}.
-
-Una alternativa al enfoque anterior sería el empleo de un decodificador. \textbf{indicar cuál sería la representación de las soluciones, cómo se realizaría la decodificación, por qué esa decodificación produciría siempre soluciones válidas, y qué tipo de operadores habría que emplear}
-
-En la siguiente sección se realiza una comparativa de estos dos enfoques.
 
 # Resultados
 
-\textbf{Comentar las instancias empleadas y los parámetros generales del algoritmo}
-
-\textbf{Comentar los resultados de la Figura 1 y de la Tabla 1} 
 
 ```{r fitness-evol, fig.cap = "Evolución de fitness promediada sobre todas las ejecuciones", fig.subcap=instances, out.width="33%"}
 

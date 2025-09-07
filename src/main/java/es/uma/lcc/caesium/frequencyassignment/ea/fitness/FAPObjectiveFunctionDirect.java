@@ -26,12 +26,13 @@ public class FAPObjectiveFunctionDirect extends DiscreteObjectiveFunction implem
      * @param fap the problem instance
      */
     public FAPObjectiveFunctionDirect(FrequencyAssignmentProblem fap) {
-        super(fap.numEmitters() * (fap.maxFrequency() + 1), 2); // binary alphabet
+    	// Cantidad de emisores multiplicado por la frecuencia máxima si se usara cada frecuencia una sola vez, Alfabeto binario.
+    	super(fap.numEmitters() * (fap.maxFrequency() + 1), 2); 
 		this.fap = fap;
         this.maxFreq = fap.maxFrequency();
         this.freqCount = maxFreq + 1;
 
-        // Fix a stable emitter order (sorted by id as in getEmitterNames()).
+        // Emisores
         this.emitterOrder = new ArrayList<>(fap.getEmitterNames());
     }
 
@@ -40,68 +41,6 @@ public class FAPObjectiveFunctionDirect extends DiscreteObjectiveFunction implem
         return fap;
     }
 
-    /**
-     * Maps genotype index to (emitterIndex, frequency).
-     * idx = e * freqCount + f
-     */
-    private int indexOf(int emitterIndex, int frequency) {
-        return emitterIndex * freqCount + frequency;
-    }
-
-    /**
-     * Decodes the flattened matrix genotype into the assignment map.
-     * Any gene value != 0 is treated as "assigned".
-     */
-    @Override
-    public Map<String, Set<Integer>> genotype2map(Genotype g) {
-        Map<String, Set<Integer>> assignment = new HashMap<>();
-
-        for (int e = 0; e < emitterOrder.size(); e++) {
-            String id = emitterOrder.get(e);
-            Set<Integer> freqs = new HashSet<>();
-
-            for (int f = 0; f < freqCount; f++) {
-                int gene = (int) g.getGene(indexOf(e, f)); // assumes integer access
-                if (gene != 0) {
-                    freqs.add(f);
-                }
-            }
-
-            assignment.put(id, freqs);
-        }
-
-        return assignment;
-    }
-
-    /**
-     * Objective: minimize span (max frequency - min frequency) subject to feasibility.
-     * Infeasible solutions are penalized with Double.MAX_VALUE.
-     */
-    @Override
-	protected double _evaluate(Individual i) {
-        Map<String, Set<Integer>> assignment = genotype2map(i.getGenome());
-
-        // Quick early exits: if any emitter has no frequencies but demand > 0, infeasible
-        for (String id : emitterOrder) {
-            int assigned = assignment.get(id).size();
-            int demand = fap.getEmitter(id).demand();
-            if (assigned != demand) {
-                return Double.MAX_VALUE;
-            }
-        }
-
-        // Full feasibility (pairwise separations, etc.)
-        if (!fap.isFeasible(assignment)) {
-            return Double.MAX_VALUE;
-        }
-
-        // Feasible: return span
-        return FrequencyAssignmentProblem.frequencySpan(assignment);
-    }
-
-    /**
-     * Convenience getters if needed by the EA.
-     */
     public int getMaxFreq() {
         return maxFreq;
     }
@@ -114,6 +53,67 @@ public class FAPObjectiveFunctionDirect extends DiscreteObjectiveFunction implem
 	public OptimizationSense getOptimizationSense() {
 		return OptimizationSense.MINIMIZATION;
 	}
+
+	/**
+     * Mapear el índice del genotipo al índice del emisor más la frecuencia.
+     * Cada emisor comienza en e * freqCount.
+     * índice = e * frecuencias + f
+     */
+    private int indexOf(int emitterIndex, int frequency) {
+        return emitterIndex * freqCount + frequency;
+    }
+
+    /**
+     * Convertir el genotipo en un objeto. 
+     */
+    @Override
+    public Map<String, Set<Integer>> genotype2map(Genotype g) {
+        Map<String, Set<Integer>> assignment = new HashMap<>();
+
+        // Iterar por los emisores
+        for (int e = 0; e < emitterOrder.size(); e++) {
+        	// ID del emisor: e01, e02, ... e21.
+            String id = emitterOrder.get(e);
+            Set<Integer> freqs = new HashSet<>();
+            
+            // Iterar por las frecuencias
+            for (int f = 0; f < freqCount; f++) {
+                int gene = (int) g.getGene(indexOf(e, f)); 
+                // Los valores = 1 representan que la frecuencia se ha asignado al genotipo.
+                if (gene != 0) {
+                    freqs.add(f);
+                }
+            }
+            assignment.put(id, freqs);
+        }
+        return assignment;
+    }
+
+    /**
+     * Evaluar las soluciones.
+     * Se aplica una penalización única a las asignaciones que violen las restrucciones con MAX_VALUE.
+     */
+    @Override
+	protected double _evaluate(Individual i) {
+    	// Obtener el atributo genoma del individuo
+        Map<String, Set<Integer>> assignment = genotype2map(i.getGenome());
+
+        // Si no hay frecuencias asignadas, no es una asignación factible
+        // Como todas las penalizaciones se aplican igual, se puede cerrar el bucle más rápidamente para ahorrar tiempo.
+        for (String id : emitterOrder) {
+            int assigned = assignment.get(id).size();
+            int demand = fap.getEmitter(id).demand();
+            if (assigned != demand) {
+                return Double.MAX_VALUE;
+            }
+        }
+        // Si no es factible por otras razones
+        if (!fap.isFeasible(assignment)) {
+            return Double.MAX_VALUE;
+        }
+        // Si es factible, devolver la distancia entre la frecuencia máxima y la mínima
+        return FrequencyAssignmentProblem.frequencySpan(assignment);
+    }
 
 }
 
