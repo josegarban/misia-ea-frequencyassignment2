@@ -13,7 +13,7 @@ import es.uma.lcc.caesium.ea.fitness.OptimizationSense;
 import es.uma.lcc.caesium.frequencyassignment.FrequencyAssignmentProblem;
 import es.uma.lcc.caesium.ea.fitness.PermutationalObjectiveFunction; 
 
-public class FAPObjectiveFunctionPermutational extends PermutationalObjectiveFunction 
+public class FAPObjectiveFunctionDirect extends PermutationalObjectiveFunction 
 	implements FAPObjectiveFunction {
 
 	private final 				FrequencyAssignmentProblem fap;
@@ -22,7 +22,7 @@ public class FAPObjectiveFunctionPermutational extends PermutationalObjectiveFun
 	private final int 			genomeLen;           // = emitterIds.size() * L
 	private static final double PENALTY = 1e6; // big-M penalty for infeasible decodes
 	
-	public FAPObjectiveFunctionPermutational(FrequencyAssignmentProblem fap) {
+	public FAPObjectiveFunctionDirect(FrequencyAssignmentProblem fap) {
 	    // Constructor de la clase. 
 		// Asumimos que las frecuencias comienzan desde 0 y terminan en la máxima frecuencia que se calcule.
 	    super(fap.numEmitters() * (fap.maxFrequency() + 1));

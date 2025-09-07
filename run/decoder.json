@@ -1,0 +1,32 @@
+{
+    "numruns" : 20,
+    "seed" : 1,
+    "islands" : [
+        {
+            "numislands" : 1,
+            "popsize" : 100,
+            "offspring" : 99,
+            "maxevals" : 200000,
+            "initialization" : {
+                "name": "permutation"
+            },
+            "selection" : {
+                "name" : "tournament",
+                "parameters" : ["2"]
+            },
+            "variation" : [
+                {
+                    "name" : "ucx",
+                    "parameters" : ["0.9"]
+                },
+                {
+                    "name" : "swap",
+                    "parameters" : ["0.6321"]
+                }
+            ],
+            "replacement" : {
+                "name" : "comma"
+            }
+        }
+    ]
+}

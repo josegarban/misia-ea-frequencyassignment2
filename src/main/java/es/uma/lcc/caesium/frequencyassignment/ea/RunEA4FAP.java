@@ -11,16 +11,15 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 
 import es.uma.lcc.caesium.ea.base.EvolutionaryAlgorithm;
 import es.uma.lcc.caesium.ea.config.EAConfiguration;
-import es.uma.lcc.caesium.ea.fitness.DiscreteObjectiveFunction;
 import es.uma.lcc.caesium.ea.statistics.EntropyDiversity;
 import es.uma.lcc.caesium.frequencyassignment.FrequencyAssignmentProblem;
 import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunction;
 import es.uma.lcc.caesium.frequencyassignment.ea.operator.FAPVariationFactory;
-
+import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
 
 /**
  * Class for testing the evolutionary algorithm for the Frequency Assignment Problem
- * @author ccottap
+ * @author 
  * @version 1.0
  */
 public class RunEA4FAP {
@@ -47,11 +46,13 @@ public class RunEA4FAP {
 		
 		FrequencyAssignmentProblem fap = new FrequencyAssignmentProblem(args[1] + ".fap");
 		System.out.println(fap);
-		DiscreteObjectiveFunction obj = null;
+		
 		//
 		// TODO crear la función objetivo
 		// obj = new ...
 		//
+		FAPObjectiveFunctionDirect obj = new FAPObjectiveFunctionDirect(fap);
+		
 		myEA.setObjectiveFunction(obj);
 		myEA.getStatistics().setDiversityMeasure(new EntropyDiversity());
 

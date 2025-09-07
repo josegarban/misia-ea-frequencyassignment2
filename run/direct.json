@@ -1,0 +1,32 @@
+{
+    "numruns" : 20,
+    "seed" : 1,
+    "islands" : [
+        {
+            "numislands" : 1,
+            "popsize" : 100,
+            "offspring" : 99,
+            "maxevals" : 2000,
+            "initialization" : {
+                "name": "bitstring"
+            },
+            "selection" : {
+                "name" : "tournament",
+                "parameters" : ["2"]
+            },
+            "variation" : [
+                {
+                    "name" : "spx",
+                    "parameters" : ["0.9"]
+                },
+                {
+                    "name" : "bitflip",
+                    "parameters" : ["0.6321"]
+                }
+            ],
+            "replacement" : {
+                "name" : "comma"
+            }
+        }
+    ]
+}
