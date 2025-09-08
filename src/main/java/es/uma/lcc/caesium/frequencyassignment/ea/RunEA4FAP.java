@@ -17,6 +17,7 @@ import es.uma.lcc.caesium.frequencyassignment.ea.operator.FAPVariationFactory;
 //import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
 //import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionPermutationalFAE;
 import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjective;
+import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjectiveFAE;
 /**
  * Class for testing the evolutionary algorithm for the Frequency Assignment Problem
  * @author 
@@ -55,7 +56,7 @@ public class RunEA4FAP {
 		//MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
 		if (args[0].contains("decoder")) {
 			System.out.println("Using decoder...");
-			MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+			MinSpanFAPObjectiveFAE obj = new MinSpanFAPObjectiveFAE(fap);
 			myEA.setObjectiveFunction(obj);
 			for (int i=0; i<numruns; i++) {
 				myEA.run();
@@ -63,7 +64,7 @@ public class RunEA4FAP {
 									String.format(Locale.US, "%.2f", myEA.getStatistics().getTime(i)) + "s\t" +
 									myEA.getStatistics().getBest(i).getFitness());
 				System.out.println(myEA.getStatistics().getBest(i).getGenome());
-				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjective)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
+				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjectiveFAE)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
 				}
 			 }
 		else {
