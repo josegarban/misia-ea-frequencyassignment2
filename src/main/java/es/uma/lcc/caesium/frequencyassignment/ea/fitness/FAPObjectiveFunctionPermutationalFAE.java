@@ -64,51 +64,6 @@ public class FAPObjectiveFunctionPermutationalFAE
         return true;
     }
 
-    // ---------------- Frequency-preserving crossover (FX) ----------------
-    public int[] crossoverFX(int[] parent1, int[] parent2) {
-        Map<String, Set<Integer>> A1 = decodeFAE(parent1);
-
-        Map<Integer, LinkedHashSet<String>> freqGroups = new LinkedHashMap<>();
-        for (var e : A1.entrySet()) {
-            for (int f : e.getValue()) {
-                freqGroups.computeIfAbsent(f, k -> new LinkedHashSet<>()).add(e.getKey());
-            }
-        }
-
-        int[] posP1 = positionIndex(parent1);
-        int[] posP2 = positionIndex(parent2);
-
-        List<Map.Entry<Integer, LinkedHashSet<String>>> orderedGroups =
-                new ArrayList<>(freqGroups.entrySet());
-        orderedGroups.sort(Comparator.comparingInt(e -> minPos(e.getValue(), posP1)));
-
-        LinkedHashSet<String> childOrderIds = new LinkedHashSet<>();
-        for (var group : orderedGroups) {
-            List<String> members = new ArrayList<>(group.getValue());
-            members.sort(Comparator.comparingInt(id -> posP2[id2pos.get(id)]));
-            childOrderIds.addAll(members);
-        }
-
-        for (int p : parent2) childOrderIds.add(emitterIds[p]);
-
-        int[] child = new int[emitterIds.length];
-        int i = 0;
-        for (String id : childOrderIds) child[i++] = id2pos.get(id);
-        return child;
-    }
-
-    // ---------------- Helpers ----------------
-    private int[] positionIndex(int[] perm) {
-        int[] pos = new int[emitterIds.length];
-        for (int i = 0; i < perm.length; i++) pos[perm[i]] = i;
-        return pos;
-    }
-
-    private int minPos(Collection<String> ids, int[] pos) {
-        int best = Integer.MAX_VALUE;
-        for (String id : ids) best = Math.min(best, pos[id2pos.get(id)]);
-        return best;
-    }
 
     private int[] extractPermutation(Genotype g) {
         int n = g.length();
@@ -128,7 +83,17 @@ public class FAPObjectiveFunctionPermutationalFAE
     @Override
     protected double _evaluate(Individual ind) {
         Map<String, Set<Integer>> assignment = genotype2map(ind.getGenome());
-        return (double) FrequencyAssignmentProblem.frequencySpan(assignment);
+        int penalty = 0;
+		if (!problem.isFeasible(assignment)) {
+		     penalty = 1000000;
+		}
+		
+		if (penalty > 0) {
+			return penalty;}
+		else {
+			return (double) FrequencyAssignmentProblem.frequencySpan(assignment);
+		}
+        
     }
 
     // ---------------- Decoder: First-Available-Emitter (FAE) ----------------

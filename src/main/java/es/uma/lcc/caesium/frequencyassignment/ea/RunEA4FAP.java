@@ -15,8 +15,9 @@ import es.uma.lcc.caesium.ea.statistics.EntropyDiversity;
 import es.uma.lcc.caesium.frequencyassignment.FrequencyAssignmentProblem;
 import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunction;
 import es.uma.lcc.caesium.frequencyassignment.ea.operator.FAPVariationFactory;
-import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
-
+//import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
+//import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionPermutationalFAE;
+import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjective;
 /**
  * Class for testing the evolutionary algorithm for the Frequency Assignment Problem
  * @author 
@@ -51,7 +52,8 @@ public class RunEA4FAP {
 		// TODO crear la función objetivo
 		// obj = new ...
 		//
-		FAPObjectiveFunctionDirect obj = new FAPObjectiveFunctionDirect(fap);
+		//FAPObjectiveFunctionDirect obj = new FAPObjectiveFunctionDirect(fap);
+		MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
 		
 		myEA.setObjectiveFunction(obj);
 		myEA.getStatistics().setDiversityMeasure(new EntropyDiversity());

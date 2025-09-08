@@ -197,14 +197,14 @@ public class FrequencyAssignmentProblem {
 			Set<Integer> freqs = assignment.get(id);
 			if (freqs.size() != emitters.get(id).demand()) {
 				// The number of frequencies assigned to the emitter is not correct
-                System.out.println("Not enough frequencies for emitter " + id + " (" + freqs.size() + " instead of " + emitters.get(id).demand() + ")");
+                //System.out.println("Not enough frequencies for emitter " + id + " (" + freqs.size() + " instead of " + emitters.get(id).demand() + ")");
 				return false;
             }
 			for (int f1: freqs) {
                 for (int f2: freqs) {
                     if ((f1 != f2) && !checkSeparation(f1, f2, 0.0)) {
-                    	System.out.println("Separation constraint violated in " + id  + " (" + f1 + " and " + f2 + ")");
-                    	System.out.println("The minimum separation is " + getMinimumSeparation(0.0));
+                    	//System.out.println("Separation constraint violated in " + id  + " (" + f1 + " and " + f2 + ")");
+                    	//System.out.println("The minimum separation is " + getMinimumSeparation(0.0));
                         return false;
                     }
                 }
@@ -216,8 +216,8 @@ public class FrequencyAssignmentProblem {
                     for (int f1: freqs) {
                         for (int f2: assignment.get(other)) {
                             if (!checkSeparation(f1, f2, d)) {
-                            	System.out.println("Separation constraint violated between " + id + " and " + other + " (" + f1 + " and " + f2 + ")");
-                            	System.out.println("The distance is " + d + " and the minimum separation is " + getMinimumSeparation(d));
+                            	//System.out.println("Separation constraint violated between " + id + " and " + other + " (" + f1 + " and " + f2 + ")");
+                            	//System.out.println("The distance is " + d + " and the minimum separation is " + getMinimumSeparation(d));
                                 return false;
                             }
                         }

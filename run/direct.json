@@ -1,12 +1,12 @@
 {
-    "numruns" : 20,
+    "numruns" : 1,
     "seed" : 1,
     "islands" : [
         {
             "numislands" : 1,
             "popsize" : 100,
             "offspring" : 99,
-            "maxevals" : 200000,
+            "maxevals" : 100000,
             "initialization" : {
                 "name": "bitstring"
             },
@@ -21,7 +21,7 @@
                 },
                 {
                     "name" : "bitflip",
-                    "parameters" : ["0.6321"]
+                    "parameters" : ["0.04761"]
                 }
             ],
             "replacement" : {
