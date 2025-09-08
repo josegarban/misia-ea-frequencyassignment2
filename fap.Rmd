@@ -16,9 +16,9 @@ geometry:
   - left=1.5in
   - right=1.5in
 params: 
-  instances: ["p1","p2"]
-  algorithms: ["direct"]
-  maxevals: 200000
+  instances: ["p1", "p2"]
+  algorithms: ["decoder1","decoder2"]
+  maxevals: 100000
 ---
 
 ```{r setup, include=FALSE}
@@ -71,7 +71,7 @@ statmat <- function(lst, fnc) {
   rc <- dim(lst[[1]]) 	   
   ar1 <- array(unlist(lst), c(rc, n)) 
   mat <- apply(ar1, c(1, 2), fnc)
-  colnames(mat)=c("evals", "best", "current", "mean", "diversity")
+  colnames(mat)=c("evals", "best", "current", "mean")#, "diversity")
   return(mat)
 }
 
@@ -79,19 +79,20 @@ statmat <- function(lst, fnc) {
 # processing
 process_rundata <- function (rundata) {
   s <- 100
-  df <- data.frame("evals" = rundata$isols$evals, "data" = rundata$isols$fitness)
+  df <- data.frame(evals = rundata$isols$evals,
+                   data  = rundata$isols$fitness)
   mat1 <- sampling(df, s, maxevals)
-  df <- data.frame("evals" = rundata$idata$evals, "data" = rundata$idata$best)
+  n <- length(rundata$idata$evals)
+df <- data.frame(evals = rundata$idata$evals,
+                   data  = rundata$idata$best)
   mat2 <- sampling(df, s, maxevals)
   mat1 <- cbind(mat1, mat2[,2])
-  df <- data.frame("evals" = rundata$idata$evals, "data" = rundata$idata$mean)
+  df <- data.frame(evals = rundata$idata$evals,
+                   data  = rundata$idata$mean, n)
   mat2 <- sampling(df, s, maxevals)
   mat1 <- cbind(mat1, mat2[,2])
-  df <- data.frame("evals" = rundata$idata$evals, "data" = rundata$idata$diversity)
-  mat2 <- sampling(df, s, maxevals)
-  mat1 <- cbind(mat1, mat2[,2])
-  colnames(mat1) <- c("evals", "best", "current", "mean", "diversity")  
-  return (mat1)
+  colnames(mat1) <- c("evals", "current", "best", "mean")
+  mat1
 }
 
 # processes a batch of data files (one per run)
@@ -112,10 +113,10 @@ process_runbatch <- function (data) {
         runmat[,"current"] <- pmax(runmat[,"current"], mat[,"current"])
         runmat[,"best"] <- pmax(runmat[,"best"], mat[,"best"])
         runmat[,"mean"] <- runmat[,"mean"] + mat[,"mean"]
-        runmat[,"diversity"] <- runmat[,"diversity"] + mat[,"diversity"]
+        #runmat[,"diversity"] <- runmat[,"diversity"] + mat[,"diversity"]
       }
       runmat[,"mean"] <- runmat[,"mean"]/numislands
-      runmat[,"diversity"] <- runmat[,"diversity"]/numislands
+      #runmat[,"diversity"] <- runmat[,"diversity"]/numislands
     }
     stats[[i]] <- runmat
     resbestall[sprintf("run%d",i)] <- runmat[,"best"]

@@ -8,7 +8,7 @@
             "offspring" : 99,
             "maxevals" : 1000,
             "initialization" : {
-                "name": "bitstring"
+                "name": "permutation"
             },
             "selection" : {
                 "name" : "tournament",
@@ -16,11 +16,11 @@
             },
             "variation" : [
                 {
-                    "name" : "spx",
+                    "name" : "ucx",
                     "parameters" : ["0.9"]
                 },
                 {
-                    "name" : "bitflip",
+                    "name" : "swap",
                     "parameters" : ["0.04761"]
                 }
             ],

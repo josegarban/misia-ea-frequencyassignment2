@@ -48,7 +48,7 @@ public class RunEA4FAP {
 		System.out.println(fap);
 		
 		// función objetivo
-		if (args[0].contains("decoder")) {
+		if (args[0].contains("decoderfae")) {
 			System.out.println("Using decoder (FAE)...");
 			MinSpanFAPObjectiveFAE obj = new MinSpanFAPObjectiveFAE(fap);
 			myEA.setObjectiveFunction(obj);
@@ -61,7 +61,7 @@ public class RunEA4FAP {
 				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjectiveFAE)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
 				}
 			 }
-		else if (args[0].contains("decoder-faf")){
+		else if (args[0].contains("decoderfaf")){
 			System.out.println("Using decoder (FAF)...");
 			MinSpanFAPObjectiveFAF obj = new MinSpanFAPObjectiveFAF(fap);
 			myEA.setObjectiveFunction(obj);
