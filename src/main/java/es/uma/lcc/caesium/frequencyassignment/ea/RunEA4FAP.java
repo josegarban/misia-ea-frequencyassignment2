@@ -13,7 +13,6 @@ import es.uma.lcc.caesium.ea.base.EvolutionaryAlgorithm;
 import es.uma.lcc.caesium.ea.config.EAConfiguration;
 import es.uma.lcc.caesium.ea.statistics.EntropyDiversity;
 import es.uma.lcc.caesium.frequencyassignment.FrequencyAssignmentProblem;
-import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunction;
 import es.uma.lcc.caesium.frequencyassignment.ea.operator.FAPVariationFactory;
 //import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
 //import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionPermutationalFAE;
@@ -53,26 +52,39 @@ public class RunEA4FAP {
 		// obj = new ...
 		//
 		//FAPObjectiveFunctionDirect obj = new FAPObjectiveFunctionDirect(fap);
-		MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+		//MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+		if (args[0].contains("decoder")) {
+			System.out.println("Using decoder...");
+			MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+			myEA.setObjectiveFunction(obj);
+			for (int i=0; i<numruns; i++) {
+				myEA.run();
+				System.out.println ("Run " + i + ": " + 
+									String.format(Locale.US, "%.2f", myEA.getStatistics().getTime(i)) + "s\t" +
+									myEA.getStatistics().getBest(i).getFitness());
+				System.out.println(myEA.getStatistics().getBest(i).getGenome());
+				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjective)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
+				}
+			 }
+		else {
+			System.out.println("Using direct...");
+			MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+			myEA.setObjectiveFunction(obj);
+			for (int i=0; i<numruns; i++) {
+				myEA.run();
+				System.out.println ("Run " + i + ": " + 
+									String.format(Locale.US, "%.2f", myEA.getStatistics().getTime(i)) + "s\t" +
+									myEA.getStatistics().getBest(i).getFitness());
+				System.out.println(myEA.getStatistics().getBest(i).getGenome());
+				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjective)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
+				
+				}
+			}
 		
-		myEA.setObjectiveFunction(obj);
 		myEA.getStatistics().setDiversityMeasure(new EntropyDiversity());
 
-		for (int i=0; i<numruns; i++) {
-			myEA.run();
-			System.out.println ("Run " + i + ": " + 
-								String.format(Locale.US, "%.2f", myEA.getStatistics().getTime(i)) + "s\t" +
-								myEA.getStatistics().getBest(i).getFitness());
-			System.out.println(myEA.getStatistics().getBest(i).getGenome());
-			System.out.println(fap.formatFrequencyAssignment(((FAPObjectiveFunction)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
-		}
 		PrintWriter file = new PrintWriter(args[0] + "-stats-" + args[1] + ".json");
 		file.print(myEA.getStatistics().toJSON().toJson());
 		file.close();
 	}
-	
-	
-	
-	
-
 }
