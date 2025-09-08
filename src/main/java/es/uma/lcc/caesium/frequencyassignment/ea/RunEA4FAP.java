@@ -14,10 +14,9 @@ import es.uma.lcc.caesium.ea.config.EAConfiguration;
 import es.uma.lcc.caesium.ea.statistics.EntropyDiversity;
 import es.uma.lcc.caesium.frequencyassignment.FrequencyAssignmentProblem;
 import es.uma.lcc.caesium.frequencyassignment.ea.operator.FAPVariationFactory;
-//import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionDirect;
-//import es.uma.lcc.caesium.frequencyassignment.ea.fitness.FAPObjectiveFunctionPermutationalFAE;
 import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjective;
 import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjectiveFAE;
+import es.uma.lcc.caesium.frequencyassignment.ea.fitness.MinSpanFAPObjectiveFAF;
 /**
  * Class for testing the evolutionary algorithm for the Frequency Assignment Problem
  * @author 
@@ -48,14 +47,9 @@ public class RunEA4FAP {
 		FrequencyAssignmentProblem fap = new FrequencyAssignmentProblem(args[1] + ".fap");
 		System.out.println(fap);
 		
-		//
-		// TODO crear la función objetivo
-		// obj = new ...
-		//
-		//FAPObjectiveFunctionDirect obj = new FAPObjectiveFunctionDirect(fap);
-		//MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
+		// función objetivo
 		if (args[0].contains("decoder")) {
-			System.out.println("Using decoder...");
+			System.out.println("Using decoder (FAE)...");
 			MinSpanFAPObjectiveFAE obj = new MinSpanFAPObjectiveFAE(fap);
 			myEA.setObjectiveFunction(obj);
 			for (int i=0; i<numruns; i++) {
@@ -67,6 +61,19 @@ public class RunEA4FAP {
 				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjectiveFAE)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
 				}
 			 }
+		else if (args[0].contains("decoder-faf")){
+			System.out.println("Using decoder (FAF)...");
+			MinSpanFAPObjectiveFAF obj = new MinSpanFAPObjectiveFAF(fap);
+			myEA.setObjectiveFunction(obj);
+			for (int i=0; i<numruns; i++) {
+				myEA.run();
+				System.out.println ("Run " + i + ": " + 
+									String.format(Locale.US, "%.2f", myEA.getStatistics().getTime(i)) + "s\t" +
+									myEA.getStatistics().getBest(i).getFitness());
+				System.out.println(myEA.getStatistics().getBest(i).getGenome());
+				System.out.println(fap.formatFrequencyAssignment(((MinSpanFAPObjectiveFAF)obj).genotype2map(myEA.getStatistics().getBest(i).getGenome())));
+				}
+		}
 		else {
 			System.out.println("Using direct...");
 			MinSpanFAPObjective obj = new MinSpanFAPObjective(fap);
