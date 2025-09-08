@@ -16,9 +16,10 @@ geometry:
   - left=1.5in
   - right=1.5in
 params: 
-  instances: ["p1", "p2"]
-  algorithms: ["decoder1","decoder2"]
+  instances: ["p1", "p2", "p3", "p5", "p6"]
+  algorithms: ["decoderfae","decoderfaf"]
   maxevals: 100000
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -165,11 +166,61 @@ rm(list=c("data_list", "json_data"))
 
 # Introducción
 
+El problema de asignación de frecuencias (FAP) es de considerable importancia para diversos servicios militares y civiles como las redes de telefonía móvil, que proveen cobertura a áreas urbanas y rurales alrededor del mundo, lo cual requiere una asignación eficiente y efectiva del espectro radioeléctrico a cada proveedor (@valenzuela1998permutation). La industria de telecomunicaciones requiere permisos por parte del Estado donde sus servicios se desarrollen, y esto implica tanto competencia con otras compañías como la adaptación a los espectros permitidos por los teléfonos móviles según el estándar que corresponda. El volumen de señales que se intercambian entre los dispositivos de cada usuario y las antenas debe transmitirse reduciendo la interferencia por parte de otros dispositivos tanto de la misma compañía que provee el servicio como por parte de otras compañías. La asignación eficiente debe asimismo tomar en cuenta la topología local que comprende obstáculos como edificios y montañas. Por otra parte, la ubicación de las antenas puede requerir pagos a los propietarios de las fincas donde se coloquen o permisos a las autoridades correspondientes. La necesidad de mantener la lealtad de los usuarios con un servicio de buena calidad, la complejidad de seleccionar los puntos dónde colocar las antenas y la envergadura de la infraestructura requerida repercuten en costes que hace que el FAP sea de considerable valor económico.
+
+Existen diversas formulaciones del problema y técnicas de búsqueda que incluyen las siguientes características comunes (@aardal2007models):
+
+\begin{enumerate}
+\item Deben asignarse frecuencias a un conjunto de antenas para que la transmisión de datos sea posible, dentro de un conjunto de frecuencias que puede diferir según conexiones.
+\item Las frecuencias asignadas a dos conexiones pueden resultar en interferencia bajo las siguientes condiciones: (a) las dos frecuencias están cerca en la banda (b) las conexiones deben estar geográficamente próximas.
+\end{enumerate}
+
+De todas las variantes del problema FAP que existen, la que se analizará es la \textit{Minimum Span Frequency Assignation Problem} (MS-FAP). En este problema se busca minimizar la amplitud (\textit{span}) de la asignación de frecuencias, lo que es la diferencia entre la frecuencia más alta y las más baja utilizadas. 
+
+\clearpage 
+La formulación a ser empleada es la siguiente: 
+
+Dadas $n$ emisoras $\mathcal{E} = \{ e_{1}, \ldots, e_{n} \}$, donde $e_{i} = (id_{i}, (x_{i}, y_{i}, z_{i}), d_{i})$, y restricciones de interferencia especificadas por $\delta : \mathbb{N} \to \mathbb{R}$, encontrar una asignación de frecuencias $\Psi = \{\psi_{1}, \ldots, \psi_{n}\} \in (2^{\mathbb{N}})^{n}$ tal que:
+
+\begin{enumerate}
+  \item $\forall i \in \{1, \ldots, n\} : \ |\psi_{i}| = d_{i}$
+
+  \item $\forall i,j \in \{1, \ldots, n\}, \ \forall f_{1} \in \psi_{i}, \ \forall f_{2} \in \psi_{2}:$ 
+  $(i \neq j) \ \lor \ (f_{1} \neq f_{2}) \ \Rightarrow \ dist(e_{i}, e_{j}) \geq \delta(|f_{1} - f_{2}|)$
+  
+  \item Se minimiza el rango $r(\Psi)$ de frecuencias empleadas:
+  $r(\Psi) = \max_{1 \leq i \leq n} \left( \max_{f \in \psi_{i}} f \right) - \min_{1 \leq i \leq n} \left( \min_{f \in \psi_{i}} f \right)$
+\end{enumerate}
+
+
+El FAP es \textit{NP-hard} (@valenzuela1998permutation) y se ha resuelto mediante diferentes algoritmos, que incluyen metaheurísticas como algoritmos voraces, búsqueda local, búsqueda tabú y algoritmos evolutivos, entre otros @luna2011optimization. 
+
+Las instancias a utilizarse en el problema son las instancias de Filadelfia, que son 21 hexágonos representando una red celular simplificada sobre dicha ciudad estadounidense, cada una de las cuales requiere un número de frecuencias  (@aardal2007models). Todas las instancias tienen la misma cantidad de emisores, pero varían las siguientes características (a) demanda por celda y (b) distancia mínima entre emisores para poder usar una frecuencia adyacente en una cantidad determinada de unidades de frecuencia. La demanda aumenta progresivamente con las instancias.
+
+\begin{table}[ht]
+\centering
+\caption{Descripción de las instancias del problema de asignación de frecuencias (FAP).}
+\label{tab:fap-instances}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Instancia} & \textbf{Emisores} & \textbf{$\sum_{i} d_{i}$} & \textbf{$min(d_{i}$)} & \textbf{$max(d_{i})$} \\
+\hline
+p1 & 21 & 481 & 8  & 77 \\
+p2 & 21 & 481 & 8  & 77 \\
+p3 & 21 & 470 & 5  & 45 \\
+p4 & 21 & 470 & 5  & 45 \\
+p5 & 21 & 420 & 20 & 20 \\
+p6 & 21 & 420 & 20 & 20 \\
+\hline
+\end{tabular}
+\end{table}
 
 # Resultados
 
 
-```{r fitness-evol, fig.cap = "Evolución de fitness promediada sobre todas las ejecuciones", fig.subcap=instances, out.width="33%"}
+# Referencias
+
+```{r fitness-evol, fig.cap = "Evoluci\\'on de fitness promediada sobre todas las ejecuciones", fig.subcap=instances, out.width="50%"}
 
 library(ggplot2)
 library(scales)
@@ -229,93 +280,9 @@ for (instance in instances) {
             legend.background = element_rect(fill='transparent')))
 
 }
-
 rm (list = c("rundata", "miny", "maxy", "df"))
 ```
 
 
 
-```{r fitness}
 
-getPval <- function(instance, alg1, alg2) {
-  v1 <- data_processed[[alg1, instance]][["sols"]]$fitness
-  v2 <- data_processed[[alg2, instance]][["sols"]]$fitness
-  s <- wilcox.test(v1, v2, alternative = "two.sided")
-  if (is.na(s$p.value)) {
-    s$p.value <- 1
-  }
-  
-  return(s$p.value)
-}
-
-getSymbol <- function (alg, instance) {
-  if (alg == bestalg[instance])
-    return ("$\\star$")
-  pval <- table_significance[instance, alg]
-  if (pval>0.05)
-    return ("$\\phantom{\\bullet}$")
-  else 
-    return ("$\\bullet$")
-
-}
-
-table_significance <- data.frame(matrix(nrow=num_instances, ncol=num_algorithms))
-colnames(table_significance) <- algorithms
-rownames(table_significance) <- instances
-
-bestalg <- data.frame(matrix(nrow=1, ncol=num_instances))
-colnames(bestalg) <- instances
-
-for (instance in instances) {
-  best <- -Inf
-  for (alg in algorithms) {
-    val <- mean(data_processed[[alg, instance]][["sols"]]$fitness)
-    if (val > best) {
-      best <- val
-      bestalg[instance] <- alg
-    }
-  }
-  for (alg in algorithms) {
-    table_significance[instance, alg] <- getPval(instance, alg, bestalg[[instance]])
-  }
-}
-
-library(kableExtra)
-
-#number of digits
-prec <- 3
-
-table_fitness <- data.frame(matrix(nrow=num_instances, ncol=4*num_algorithms))
-colnames(table_fitness) <- apply(expand.grid(c("best", "median", "mean", "stat"), algorithms), 
-                                 1, paste, collapse = ".")
-rownames(table_fitness) <- instances
-first_header <- c(1, rep(4, num_algorithms))
-names(first_header) <- c(" ", algorithms)
-second_header <- rep(1, 1 + num_algorithms * 4)
-names(second_header) <- c("instancia", rep(c("$x^*$", "$\\tilde{x}$", 
-                                            "$\\bar{x} \\pm \\sigma_{\\bar{x}}$", " "), num_algorithms))
-for (alg in algorithms) {
-  for (instance in instances) {
-    data_solutions <- data_processed[[alg, instance]][["sols"]]
-    table_fitness[instance, paste("best", alg, sep=".")] <- 
-      round(max(data_solutions[, "fitness"]), prec)
-    table_fitness[instance, paste("median", alg, sep=".")] <- 
-      round(median(data_solutions[, "fitness"]),prec)
-    table_fitness[instance, paste("mean", alg, sep=".")] <- paste(round(mean(data_solutions[, "fitness"]), prec), "$\\pm$", round(stderror(data_solutions[, "fitness"]), prec))
-    table_fitness[instance, paste("stat", alg, sep=".")] <- getSymbol(alg, instance)
-  }
-}
-
-rm (data_solutions)
-
-
-
-table_fitness %>%
-  kbl(escape = FALSE,
-      booktabs = T, 
-      caption = "Resultados de los algoritmos. Cada columna muestra el mejor valor encontrado ($x^*$), la mediana ($\\tilde{x}$), la media ($\\bar{x}$) y el error estándard de la media ($\\sigma_{\\bar{x}}$). Una estrella $\\star$ marca al mejor algoritmo en cada instancia, y un símbolo $\\bullet$ indica que los resultados son estadísticamente significativos con $\\alpha=0.05$",
-      col.names=names(second_header)) %>%
-kable_styling(full_width = F, latex_options="scale_down") %>%
-add_header_above(first_header) #c(" "=1, "ea" = 3)
-
-```

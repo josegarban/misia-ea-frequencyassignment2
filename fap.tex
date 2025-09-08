@@ -1,0 +1,214 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+  a4paper,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[top=1in,bottom=1in,left=1.5in,right=1.5in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{subfig}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Minimum Span Frequency Assignment Problem},
+  pdfauthor={Your Name},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Minimum Span Frequency Assignment Problem}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Enfoque Directo frente a Decodificador}
+\author{Your Name}
+\date{2025-09-08}
+
+\begin{document}
+\maketitle
+
+\section{Introducción}\label{introducciuxf3n}
+
+El problema de asignación de frecuencias (FAP) es de considerable importancia para diversos servicios militares y civiles como las redes de telefonía móvil, que proveen cobertura a áreas urbanas y rurales alrededor del mundo, lo cual requiere una asignación eficiente y efectiva del espectro radioeléctrico a cada proveedor (Valenzuela, Hurley, and Smith (1998)). La industria de telecomunicaciones requiere permisos por parte del Estado donde sus servicios se desarrollen, y esto implica tanto competencia con otras compañías como la adaptación a los espectros permitidos por los teléfonos móviles según el estándar que corresponda. El volumen de señales que se intercambian entre los dispositivos de cada usuario y las antenas debe transmitirse reduciendo la interferencia por parte de otros dispositivos tanto de la misma compañía que provee el servicio como por parte de otras compañías. La asignación eficiente debe asimismo tomar en cuenta la topología local que comprende obstáculos como edificios y montañas. Por otra parte, la ubicación de las antenas puede requerir pagos a los propietarios de las fincas donde se coloquen o permisos a las autoridades correspondientes. La necesidad de mantener la lealtad de los usuarios con un servicio de buena calidad, la complejidad de seleccionar los puntos dónde colocar las antenas y la envergadura de la infraestructura requerida repercuten en costes que hace que el FAP sea de considerable valor económico.
+
+Existen diversas formulaciones del problema y técnicas de búsqueda que incluyen las siguientes características comunes (Aardal et al. (2007)):
+
+\begin{enumerate}
+\item Deben asignarse frecuencias a un conjunto de antenas para que la transmisión de datos sea posible, dentro de un conjunto de frecuencias que puede diferir según conexiones.
+\item Las frecuencias asignadas a dos conexiones pueden resultar en interferencia bajo las siguientes condiciones: (a) las dos frecuencias están cerca en la banda (b) las conexiones deben estar geográficamente próximas.
+\end{enumerate}
+
+De todas las variantes del problema FAP que existen, la que se analizará es la \textit{Minimum Span Frequency Assignation Problem} (MS-FAP). En este problema se busca minimizar la amplitud (\textit{span}) de la asignación de frecuencias, lo que es la diferencia entre la frecuencia más alta y las más baja utilizadas.
+
+\clearpage
+
+La formulación a ser empleada es la siguiente:
+
+Dadas \(n\) emisoras \(\mathcal{E} = \{ e_{1}, \ldots, e_{n} \}\), donde \(e_{i} = (id_{i}, (x_{i}, y_{i}, z_{i}), d_{i})\), y restricciones de interferencia especificadas por \(\delta : \mathbb{N} \to \mathbb{R}\), encontrar una asignación de frecuencias \(\Psi = \{\psi_{1}, \ldots, \psi_{n}\} \in (2^{\mathbb{N}})^{n}\) tal que:
+
+\begin{enumerate}
+  \item $\forall i \in \{1, \ldots, n\} : \ |\psi_{i}| = d_{i}$
+
+  \item $\forall i,j \in \{1, \ldots, n\}, \ \forall f_{1} \in \psi_{i}, \ \forall f_{2} \in \psi_{2}:$ 
+  $(i \neq j) \ \lor \ (f_{1} \neq f_{2}) \ \Rightarrow \ dist(e_{i}, e_{j}) \geq \delta(|f_{1} - f_{2}|)$
+  
+  \item Se minimiza el rango $r(\Psi)$ de frecuencias empleadas:
+  $r(\Psi) = \max_{1 \leq i \leq n} \left( \max_{f \in \psi_{i}} f \right) - \min_{1 \leq i \leq n} \left( \min_{f \in \psi_{i}} f \right)$
+\end{enumerate}
+
+El FAP es \textit{NP-hard} (Valenzuela, Hurley, and Smith (1998)) y se ha resuelto mediante diferentes algoritmos, que incluyen metaheurísticas como algoritmos voraces, búsqueda local, búsqueda tabú y algoritmos evolutivos, entre otros Luna et al. (2011).
+
+Las instancias a utilizarse en el problema son las instancias de Filadelfia, que son 21 hexágonos representando una red celular simplificada sobre dicha ciudad estadounidense, cada una de las cuales requiere un número de frecuencias (Aardal et al. (2007)). Todas las instancias tienen la misma cantidad de emisores, pero varían las siguientes características (a) demanda por celda y (b) distancia mínima entre emisores para poder usar una frecuencia adyacente en una cantidad determinada de unidades de frecuencia. La demanda aumenta progresivamente con las instancias.
+
+\begin{table}[ht]
+\centering
+\caption{Descripción de las instancias del problema de asignación de frecuencias (FAP).}
+\label{tab:fap-instances}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Instancia} & \textbf{Emisores} & \textbf{$\sum_{i} d_{i}$} & \textbf{$min(d_{i}$)} & \textbf{$max(d_{i})$} \\
+\hline
+p1 & 21 & 481 & 8  & 77 \\
+p2 & 21 & 481 & 8  & 77 \\
+p3 & 21 & 470 & 5  & 45 \\
+p4 & 21 & 470 & 5  & 45 \\
+p5 & 21 & 420 & 20 & 20 \\
+p6 & 21 & 420 & 20 & 20 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Resultados}\label{resultados}
+
+\section{Referencias}\label{referencias}
+
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{fap_files/figure-latex/fitness-1} \caption{Evoluci\'on de fitness promediada sobre todas las ejecuciones}\label{fig:fitness-1}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{fap_files/figure-latex/fitness-2} \caption{Evoluci\'on de fitness promediada sobre todas las ejecuciones}\label{fig:fitness-2}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{fap_files/figure-latex/fitness-3} \caption{Evoluci\'on de fitness promediada sobre todas las ejecuciones}\label{fig:fitness-3}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{fap_files/figure-latex/fitness-4} \caption{Evoluci\'on de fitness promediada sobre todas las ejecuciones}\label{fig:fitness-4}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{fap_files/figure-latex/fitness-5} \caption{Evoluci\'on de fitness promediada sobre todas las ejecuciones}\label{fig:fitness-5}
+\end{figure}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-aardal2007models}
+Aardal, Karen I, Stan PM Van Hoesel, Arie MCA Koster, Carlo Mannino, and Antonio Sassano. 2007. {``Models and Solution Techniques for Frequency Assignment Problems.''} \emph{Annals of Operations Research} 153 (1): 79--129.
+
+\bibitem[\citeproctext]{ref-luna2011optimization}
+Luna, Francisco, César Estébanez, Coromoto León, José M Chaves-González, Antonio J Nebro, Ricardo Aler, Carlos Segura, et al. 2011. {``Optimization Algorithms for Large-Scale Real-World Instances of the Frequency Assignment Problem.''} \emph{Soft Computing} 15 (5): 975--90.
+
+\bibitem[\citeproctext]{ref-valenzuela1998permutation}
+Valenzuela, Christine, Steve Hurley, and Derek Smith. 1998. {``A Permutation Based Genetic Algorithm for Minimum Span Frequency Assignment.''} In \emph{International Conference on Parallel Problem Solving from Nature}, 907--16. Springer.
+
+\end{CSLReferences}
+
+\end{document}
